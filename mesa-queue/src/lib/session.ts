@@ -1,4 +1,5 @@
 const sessionKey = 'mesa-queue-session'
+const hostSessionKey = 'mesa-host-session'
 
 export type QueueSession = {
   locationId?: number
@@ -27,4 +28,34 @@ export function updateQueueSession(session: QueueSession) {
 
 export function clearQueueSession() {
   window.sessionStorage.removeItem(sessionKey)
+}
+
+export type HostSession = {
+  token: string
+  username: string
+  role: 'admin' | 'operator'
+  locationId?: number | null
+  locationName?: string | null
+}
+
+export function getHostSession(): HostSession | null {
+  const stored = window.localStorage.getItem(hostSessionKey)
+  if (!stored) {
+    return null
+  }
+
+  try {
+    return JSON.parse(stored) as HostSession
+  } catch {
+    clearHostSession()
+    return null
+  }
+}
+
+export function saveHostSession(session: HostSession) {
+  window.localStorage.setItem(hostSessionKey, JSON.stringify(session))
+}
+
+export function clearHostSession() {
+  window.localStorage.removeItem(hostSessionKey)
 }

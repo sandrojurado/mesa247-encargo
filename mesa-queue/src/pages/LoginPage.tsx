@@ -2,6 +2,8 @@ import { LockKeyhole } from 'lucide-react'
 import { type FormEvent, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { login } from '@/lib/api'
+import { saveHostSession } from '@/lib/session'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -9,13 +11,31 @@ import { Label } from '@/components/ui/label'
 
 export function LoginPage() {
   const navigate = useNavigate()
-  const [email, setEmail] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
-    window.localStorage.setItem('mesa-host-session', JSON.stringify({ email, signedInAt: Date.now() }))
-    navigate('/lista-espera')
+    setError('')
+    setIsSubmitting(true)
+
+    try {
+      const session = await login({ username, password })
+      saveHostSession({
+        token: session.token,
+        username: session.user.username,
+        role: session.user.role,
+        locationId: session.user.location_id,
+        locationName: session.user.location_name,
+      })
+      navigate('/lista-espera')
+    } catch {
+      setError('Usuario o contraseña inválidos.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -31,13 +51,12 @@ export function LoginPage() {
         <CardContent>
           <form className="grid gap-5" onSubmit={handleSubmit}>
             <div className="grid gap-2">
-              <Label htmlFor="email">Correo</Label>
+              <Label htmlFor="username">Usuario</Label>
               <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                placeholder="anfitrion@mesa247.com"
+                id="username"
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                placeholder="anfitrion1"
                 required
               />
             </div>
@@ -51,8 +70,9 @@ export function LoginPage() {
                 required
               />
             </div>
-            <Button type="submit" size="lg">
-              Iniciar sesión
+            {error ? <p className="text-sm font-medium text-destructive">{error}</p> : null}
+            <Button type="submit" size="lg" disabled={isSubmitting}>
+              {isSubmitting ? 'Validando...' : 'Iniciar sesión'}
             </Button>
           </form>
         </CardContent>

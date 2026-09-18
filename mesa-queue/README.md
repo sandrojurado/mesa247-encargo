@@ -1,32 +1,93 @@
-# React + TypeScript + Vite
+# Mesa247 Queue
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+Frontend de Mesa247 construido con Vite, React y TypeScript. Permite que los clientes se unan a la cola de espera y que el anfitrion gestione la cola desde el navegador.
 
-Currently, two official plugins are available:
+## Requisitos
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Docker y Docker Compose
+- Puerto `5174` disponible para el frontend
+- Backend corriendo en `http://localhost:8000`
 
-## React Compiler
+## Correr el frontend en Docker
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+Desde la raiz del repositorio, levanta primero el backend y la base de datos:
 
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```bash
+docker compose up -d --build mysql api
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+Luego levanta el frontend en su propio contenedor:
+
+```bash
+docker compose up -d --build queue
+```
+
+El frontend queda disponible en:
+
+```text
+http://localhost:5174
+```
+
+El contenedor del frontend se llama `mesa247-queue` y usa la variable:
+
+```bash
+VITE_API_BASE_URL=http://localhost:8000/api
+```
+
+Ese valor apunta al backend publicado en la maquina local, porque las llamadas a la API se ejecutan desde el navegador.
+
+## Levantar todo el proyecto
+
+Tambien puedes levantar base de datos, backend y frontend con un solo comando:
+
+```bash
+docker compose up -d --build mysql api queue
+```
+
+Servicios resultantes:
+
+- `mesa247-mysql`: MySQL en `localhost:3306`
+- `mesa247-api`: FastAPI en `http://localhost:8000`
+- `mesa247-queue`: React/Vite en `http://localhost:5174`
+
+## Logs y apagado
+
+Ver logs del frontend:
+
+```bash
+docker compose logs -f queue
+```
+
+Detener solo el frontend:
+
+```bash
+docker compose stop queue
+```
+
+Detener todo:
+
+```bash
+docker compose down
+```
+
+## Desarrollo local sin Docker
+
+Si necesitas correrlo directamente en tu maquina:
+
+```bash
+npm install
+npm run dev -- --host 127.0.0.1 --port 5174
+```
+
+Para cambiar la URL del backend:
+
+```bash
+VITE_API_BASE_URL=http://localhost:8000/api npm run dev -- --host 127.0.0.1 --port 5174
+```
+
+## Scripts disponibles
+
+- `npm run dev`: servidor de desarrollo de Vite.
+- `npm run build`: compila TypeScript y genera el build de produccion.
+- `npm run lint`: ejecuta Oxlint.
+- `npm run preview`: sirve localmente el build generado.

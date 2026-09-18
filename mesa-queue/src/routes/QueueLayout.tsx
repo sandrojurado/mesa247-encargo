@@ -5,8 +5,6 @@ import { cn } from '@/lib/utils'
 
 const navItems = [
   { to: '/', label: 'Inicio', end: true },
-  { to: '/cola', label: 'Cola' },
-  { to: '/login', label: 'Admin' },
 ]
 
 export function QueueLayout() {

@@ -20,6 +20,8 @@ class Settings(BaseModel):
     app_name: str = "Mesa API"
     api_prefix: str = "/api"
     cors_origins: list[str] = get_cors_origins()
+    auth_secret: str = os.getenv("AUTH_SECRET", "mesa247-dev-secret")
+    auth_session_minutes: int = int(os.getenv("AUTH_SESSION_MINUTES", "720"))
     database_url: str = os.getenv(
         "DATABASE_URL",
         "mysql+pymysql://mesa_user:mesa_password@127.0.0.1:3306/mesa247",

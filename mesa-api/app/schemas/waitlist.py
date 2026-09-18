@@ -1,3 +1,5 @@
+from typing import Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -31,3 +33,45 @@ class QueueRead(BaseModel):
     party_size: int
     position: int
     status: str
+    elapsed_seconds: int
+
+
+class LoginRequest(BaseModel):
+    username: str = Field(min_length=1, max_length=50)
+    password: str = Field(min_length=1)
+
+
+class AuthUser(BaseModel):
+    id: int
+    username: str
+    role: str
+    location_id: Optional[int] = None
+    location_name: Optional[str] = None
+
+
+class AuthSession(BaseModel):
+    token: str
+    user: AuthUser
+
+
+class HostQueueEntry(BaseModel):
+    id: int
+    location_id: int
+    location_name: str
+    customer_name: str
+    phone: str
+    party_size: int
+    position: int
+    status: str
+    sort_order: int
+    elapsed_seconds: int
+    called_elapsed_seconds: Optional[int] = None
+    is_frequent: bool
+
+
+class QueueStatusUpdate(BaseModel):
+    status: str
+
+
+class QueueReorderRequest(BaseModel):
+    queue_ids: list[int]

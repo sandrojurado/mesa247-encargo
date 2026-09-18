@@ -34,5 +34,17 @@ services:
       mysql:
         condition: service_healthy
 
+  queue:
+    build:
+      context: ./mesa-queue
+    container_name: mesa247-queue
+    restart: unless-stopped
+    environment:
+      VITE_API_BASE_URL: http://localhost:8000/api
+    ports:
+      - "5174:5174"
+    depends_on:
+      - api
+
 volumes:
   mesa247_mysql_data:
