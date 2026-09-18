@@ -42,3 +42,23 @@
     color: var(--color-foreground);
   }
 }
+
+@layer utilities {
+  .queue-progress {
+    width: 62%;
+    animation: queue-progress-pulse 1.8s ease-in-out infinite;
+  }
+}
+
+@keyframes queue-progress-pulse {
+  0%,
+  100% {
+    opacity: 0.78;
+    transform: translateX(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateX(4px);
+  }
+}

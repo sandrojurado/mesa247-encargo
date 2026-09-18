@@ -45,11 +45,6 @@ export function QueueLayout() {
       </header>
 
       <main className="mx-auto grid w-full max-w-5xl gap-8 px-4 py-8 md:py-12">
-        <div className="flex items-center gap-3 text-sm text-muted-foreground">
-          <ClipboardList size={18} />
-          <span>Turnos rápidos para anfitriones y clientes</span>
-          <LogIn className="ml-auto hidden sm:block" size={18} />
-        </div>
         <Outlet />
       </main>
     </div>

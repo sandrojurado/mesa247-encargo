@@ -1,9 +1,9 @@
-import { Minus, Plus, Users } from 'lucide-react'
+import { Minus, Plus } from 'lucide-react'
 import { type FormEvent, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
@@ -13,7 +13,7 @@ export function JoinPage() {
   const navigate = useNavigate()
   const [name, setName] = useState('')
   const [phone, setPhone] = useState('')
-  const [partySize, setPartySize] = useState(2)
+  const [partySize, setPartySize] = useState(4)
   const [submitted, setSubmitted] = useState(false)
 
   const errors = useMemo(() => {
@@ -37,25 +37,16 @@ export function JoinPage() {
   }
 
   return (
-    <section className="grid gap-8 lg:grid-cols-[1fr_420px] lg:items-start">
-      <div className="pt-2">
-        <p className="text-sm font-semibold uppercase tracking-wide text-primary">Lista de espera</p>
-        <h1 className="mt-3 max-w-2xl text-4xl font-semibold leading-tight md:text-5xl">
-          Anota tu mesa y sigue tu turno sin acercarte al anfitrión.
-        </h1>
-        <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground">
-          Registra tus datos y la cantidad de personas. La pantalla de cola queda lista para mostrar
-          la posición cuando conectemos la API.
-        </p>
-      </div>
+    <section className="mx-auto grid w-full max-w-[420px] gap-3">
+      <Card className="overflow-hidden rounded-lg py-0">
+        <div className="h-3 bg-primary" />
+        <CardContent className="grid gap-4 p-6">
+          <div>
+            <h1 className="text-2xl font-semibold leading-tight">La Terraza Azul</h1>
+            <p className="mt-1 text-sm text-muted-foreground">Lista de espera · hoy</p>
+          </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Unirse a la cola</CardTitle>
-          <CardDescription>Máximo 6 personas por turno.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form className="grid gap-5" onSubmit={handleSubmit}>
+          <form className="grid gap-4" onSubmit={handleSubmit}>
             <div className="grid gap-2">
               <Label htmlFor="name">Nombre</Label>
               <Input
@@ -64,9 +55,8 @@ export function JoinPage() {
                 value={name}
                 onChange={(event) => setName(event.target.value)}
                 aria-invalid={submitted && errors.name}
-                placeholder="Nombre de reserva"
+                placeholder="Carla"
               />
-              <p className="text-xs text-muted-foreground">{name.length}/50 caracteres</p>
             </div>
 
             <div className="grid gap-2">
@@ -78,7 +68,7 @@ export function JoinPage() {
                 value={phone}
                 onChange={(event) => setPhone(event.target.value)}
                 aria-invalid={submitted && !phoneRegex.test(phone.trim())}
-                placeholder="+51 999 999 999"
+                placeholder="+51 987 654 321"
               />
               {submitted && !phoneRegex.test(phone.trim()) ? (
                 <p className="text-xs text-destructive">Ingresa un número de teléfono válido.</p>
@@ -86,11 +76,11 @@ export function JoinPage() {
             </div>
 
             <div className="grid gap-2">
-              <Label>Cantidad</Label>
-              <div className="flex items-center justify-between rounded-md border bg-background p-2">
+              <Label>¿Cuántos son?</Label>
+              <div className="grid grid-cols-[2.75rem_1fr_2.75rem] items-center rounded-md border bg-background p-1">
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="ghost"
                   size="icon"
                   onClick={() => setPartySize((value) => Math.max(1, value - 1))}
                   disabled={partySize === 1}
@@ -98,16 +88,12 @@ export function JoinPage() {
                 >
                   <Minus size={16} />
                 </Button>
-                <div className="flex min-w-24 items-center justify-center gap-2 text-lg font-semibold">
-                  <Users size={18} />
-                  <span>{partySize}</span>
-                </div>
+                <span className="text-center text-lg font-semibold">{partySize}</span>
                 <Button
                   type="button"
-                  variant="outline"
+                  variant="ghost"
                   size="icon"
-                  onClick={() => setPartySize((value) => Math.min(6, value + 1))}
-                  disabled={partySize === 6}
+                  onClick={() => setPartySize((value) => Math.min(12, value + 1))}
                   aria-label="Aumentar cantidad"
                 >
                   <Plus size={16} />
@@ -116,9 +102,10 @@ export function JoinPage() {
             </div>
 
             <Button type="submit" size="lg" className="w-full">
-              Entrar a la cola
+              Unirme a la cola
             </Button>
           </form>
+
         </CardContent>
       </Card>
     </section>
