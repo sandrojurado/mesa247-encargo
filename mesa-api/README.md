@@ -26,3 +26,9 @@ Create the required tables with:
 ```bash
 mysql -u mesa_user -p mesa247 < database/schema.sql
 ```
+
+Seed initial locations with:
+
+```bash
+mysql -u mesa_user -p mesa247 < database/seeds/locations.sql
+```
