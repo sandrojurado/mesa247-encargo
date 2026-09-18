@@ -1,4 +1,4 @@
-import { ClipboardList, LogIn, Utensils } from 'lucide-react'
+import { Utensils } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router-dom'
 
 import { cn } from '@/lib/utils'

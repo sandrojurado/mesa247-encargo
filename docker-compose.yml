@@ -1,0 +1,38 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: mesa247-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: mesa247
+      MYSQL_USER: mesa_user
+      MYSQL_PASSWORD: mesa_password
+      MYSQL_ROOT_PASSWORD: mesa_root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mesa247_mysql_data:/var/lib/mysql
+      - ./mesa-api/database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./mesa-api/database/seeds/locations.sql:/docker-entrypoint-initdb.d/02-locations.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -umesa_user -p$$MYSQL_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  api:
+    build:
+      context: ./mesa-api
+    container_name: mesa247-api
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: mysql+pymysql://mesa_user:mesa_password@mysql:3306/mesa247
+      CORS_ORIGINS: http://localhost:5173,http://127.0.0.1:5173,http://localhost:5174,http://127.0.0.1:5174
+    ports:
+      - "8000:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  mesa247_mysql_data:
